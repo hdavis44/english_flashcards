@@ -8,7 +8,7 @@ df_remaining = None
 df_success = None
 df_fail = None
 
-rand_index = None
+current_index = None
 current_phrase = None
 current_hint = None
 current_translation = None
@@ -20,7 +20,7 @@ def ping():
     return {"status": "ok"}
 
 
-@app.post("/uploadfile/")
+@app.post("/upload_csv/")
 async def upload_csv(file: UploadFile):
     global df
     if not file.filename.endswith('.csv'):
@@ -39,3 +39,16 @@ async def upload_csv(file: UploadFile):
         "row_count": df.shape[0],
         "column_names": df.columns.tolist()
     }
+
+
+@app.get("/sample_random_row/")
+def sample_random_row():
+    if df is None:
+        return {"message": "Please upload a csv file first"}
+    else:
+        sampled_row = df.sample()
+        current_index = sampled_row.index
+        current_phrase = sampled_row["phrase"].item()
+        current_hint = sampled_row["hint"].item()
+        current_translation = sampled_row["translation"].item()
+        return sampled_row.to_dict("records")[0]
