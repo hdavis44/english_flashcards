@@ -1,6 +1,6 @@
 # Project for English flashcard homework assistance   
 
-This repository contains api.py, the main backend code.  
+This repository contains fast/api.py, the main backend code file.  
 
 To run and test the api:
 - clone the repo
