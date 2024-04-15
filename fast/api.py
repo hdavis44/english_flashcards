@@ -15,6 +15,11 @@ current_translation = None
 
 current_translation_input = None
 
+@app.get("/")
+def ping():
+    return {"status": "ok"}
+
+
 @app.post("/uploadfile/")
 async def upload_csv(file: UploadFile):
     global df
@@ -29,23 +34,8 @@ async def upload_csv(file: UploadFile):
     finally:
         file.file.close()
 
-    return {"filename": file.filename,
-            "content_type": file.content_type}
-
-
-@app.get("/summary/")
-async def summary():
-    global df
-    if df is None:
-        raise HTTPException(status_code=404, detail="DataFrame not found. Please upload a CSV file first.")
-
-    return {"summary": df.describe().to_dict()}
-
-
-@app.get("/columns/")
-async def columns():
-    global df
-    if df is None:
-        raise HTTPException(status_code=404, detail="DataFrame not found. Please upload a CSV file first.")
-
-    return {"columns": df.columns.tolist()}
+    return {
+        "filename": file.filename,
+        "row_count": df.shape[0],
+        "column_names": df.columns.tolist()
+    }
